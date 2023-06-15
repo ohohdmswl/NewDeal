@@ -17,9 +17,10 @@ import kr.happyjob.study.system.model.ComnGrpCodModel;
 @Service
 public interface accAcmService {
 
-//	List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap);
-//
-//
+	List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap);
+
+	int countactlist(Map<String, Object> paramMap);
+
 
 	
 	

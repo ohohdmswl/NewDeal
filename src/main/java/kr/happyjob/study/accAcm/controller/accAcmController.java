@@ -61,48 +61,51 @@ public class accAcmController {
    /**
     * 검색
     */
-//   @RequestMapping("accManagementList.do")
-//   public String accManagementList(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
-//		   HttpServletResponse response, HttpSession session) throws Exception {
-//	   
-//	   logger.info("+ Start " + className + ".accAcs");
-//	   logger.info("   - paramMap12312322 : " + paramMap);
-//	   
-//	   
-//	   System.out.println("랄랄랄라" + paramMap);
-//	    
-//	   logger.info("+ End " + className + ".accAcs");
-//	   
-//       int pagenum = Integer.parseInt((String) paramMap.get("pagenum"));
-//       int pageSize = Integer.parseInt((String) paramMap.get("pageSize"));
-//       int pageindex = (pagenum - 1) * pageSize;
-//       
-//       paramMap.put("pageSize", pageSize);
-//       paramMap.put("pageindex", pageindex);
-//       
-//       
-//       
-//       List<accAcmModel> accAcmSearchList = AccAcmService.accAcmSearchList(paramMap);
+   @RequestMapping("accManagementList.do")
+   public String accManagementList(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
+		   HttpServletResponse response, HttpSession session) throws Exception {
+	   
+	   logger.info("+ Start " + className + ".accAcm");
+	   logger.info("   - paramMap12312322 : " + paramMap);
+	   
+	   
+	   System.out.println("랄랄랄라" + paramMap);
+	    
+	   logger.info("+ End " + className + ".accAcm");
+	   
+       int pagenum = Integer.parseInt((String) paramMap.get("pagenum"));
+       int pageSize = Integer.parseInt((String) paramMap.get("pageSize"));
+       int pageindex = (pagenum - 1) * pageSize;
        
-//       int totalcnt = accAcmService.countactlist(paramMap);
-//       //countnoticelist의 리턴값을 totalcnt에 대입
-//
-//       
-//       model.addAttribute("accountSearchList", accountSearchList);
-//       model.addAttribute("totalcnt", totalcnt);
-//       //모델에 noticesearchlist, totalcnt을 등록해서 JSP로 넘기기
-//       
-//       
-//       
-//       logger.info("+ - paramMap2222222222222 " + accountSearchList);
-//       
-//       logger.info("+ End " + className + ".accountSearchList");
-//
-//       return "accAcs/accountSearchListGrd";
-//       //"mngNot/noticelistgrd" JSP 열기
+       paramMap.put("pageSize", pageSize);
+       paramMap.put("pageindex", pageindex);
+       
+       
+       
+       List<accAcmModel> accAcmSearchList = AccAcmService.accAcmSearchList(paramMap);
+       
+       int totalcnt = AccAcmService.countactlist(paramMap);
+       //countnoticelist의 리턴값을 totalcnt에 대입
+
+       
+       model.addAttribute("accAcmSearchList", accAcmSearchList);
+       model.addAttribute("totalcnt", totalcnt);
+       //모델에 noticesearchlist, totalcnt을 등록해서 JSP로 넘기기
+       
+       
+       
+       logger.info("+ - paramMap2222222222222 " + accAcmSearchList);
+       
+       logger.info("+ End " + className + ".accountSearchList");
+
+       return "accAcm/accAcmListGrd";
        
 	   
-//   }
+   }
+   
+   
+   
+   
    
 	   
       

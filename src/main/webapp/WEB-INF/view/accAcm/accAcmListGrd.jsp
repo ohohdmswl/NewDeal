@@ -10,13 +10,13 @@
 							</c:if>
 							
 							<c:if test="${totalcnt > 0 }">
-								<c:forEach items="${noticesearchlist}" var="list">
+								<c:forEach items="${accAcmSearchList}" var="list">
 									<tr>
-										<td><a href="javascript:fn_selectone('${list.notice_no}')">${list.notice_no}</a></td>
-										<td><a href="javascript:fn_selectonefile('${list.notice_no}')">${list.notice_title}</a></td>
-										<td>${list.notice_date}</td>
-										<td>${list.name}</td>
-										<td>${list.notice_del_yn}</td>
+										<td>${list.acnt_dt_sbjct_inout}</td>
+										<td>${list.acnt_sbject_cd}</td>
+										<td>${list.acnt_sbject_name}</td>
+										<td>${list.acnt_dt_sbject_cd}</td>
+										<td>${list.acnt_dt_sbjct_name}</td>
 									</tr>
 								</c:forEach>
 							</c:if>

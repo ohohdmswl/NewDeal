@@ -31,7 +31,7 @@ public class accAcmServiceImpl implements accAcmService {
 	private final String className = this.getClass().toString();
 	
 	@Autowired
-	MngNotDao mngNotDao;
+	accAcmDao AccAcmDao;
 	
 	@Value("${fileUpload.rootPath}")
 	private String rootPath;    // W:\\FileRepository
@@ -42,9 +42,14 @@ public class accAcmServiceImpl implements accAcmService {
 	@Value("${fileUpload.noticePath}")
 	private String noticePath;   // notice
 	
+	@Override
+	public List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap) {
+		return AccAcmDao.accAcmSearchList(paramMap);
+	}
 	
-//	@Override
-//	public List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap) {
-//		return accAcmDao.accAcmSearchList(paramMap);
-//	}
+	@Override
+	public int countactlist(Map<String, Object> paramMap) {
+		return AccAcmDao.countactlist(paramMap);
+	}
+	
 }	

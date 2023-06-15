@@ -11,8 +11,11 @@ import kr.happyjob.study.mngNot.model.NoticeModel;
 
 public interface accAcmDao {
 
-//	List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap);
+	List<accAcmModel> accAcmSearchList(Map<String, Object> paramMap);
 
+	int countactlist(Map<String, Object> paramMap);
+
+	
 
 
 	
