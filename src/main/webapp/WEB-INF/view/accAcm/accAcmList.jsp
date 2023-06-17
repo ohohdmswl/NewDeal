@@ -83,7 +83,8 @@
 					fn_accAcmList();
 					break;
 				case 'btnSave' :
-					fn_save();
+					$("#action").val("I");	
+					fn_bigInsert();
 					break;	
 				case 'btnDelete' :
 					$("#action").val("D");	
@@ -110,9 +111,7 @@
 		pagenum = pagenum || 1;
 		
 		var param = {
-			delyn : $("#acccombo").val()
-		  ,	searchKey : $("#accdcombo").val()
-		  , 	sname : $("#typecombo").val()
+			acnt_dt_sbjct_inout : $("#acnt_dt_sbjct_inout").val()
 		  , pageSize : pageSize
 		  , pageBlockSize : pageBlockSize
 		  , pagenum : pagenum
@@ -192,7 +191,7 @@
 		
 	}
 	
-	function fn_save() {
+	function fn_bigInsert() {
 		
 		if ( ! fn_Validate() ) {
 			return;
@@ -200,9 +199,8 @@
 		
 		var param = {
 				action : $("#action").val(),
-				notice_no : $("#notice_no").val(),
-				notice_title : $("#notice_title").val(),
-				notice_cont : $("#notice_cont").val()
+				acnt_sbject_cd : $("#acnt_sbject_cd").val(),
+				acnt_sbject_name : $("#acnt_sbject_name").val(),
 		}
 		
 		var savecollback = function(reval) {
@@ -213,9 +211,9 @@
 				gfCloseModal();
 				
 				if($("#action").val() == "U") {
-					fn_noticelist($("#pageno").val());
+					fn_accAcmList($("#pageno").val());
 				} else {
-					fn_noticelist();
+					fn_accAcmList();
 				}
 			}  else {
 				alert("오류가 발생 되었습니다.");				
@@ -223,7 +221,7 @@
 		}
 		
 		//callAjax("/mngNot/noticesave.do", "post", "json", false, param, savecollback) ;
-		callAjax("/mngNot/noticesave.do", "post", "json", false, $("#myForm").serialize() , savecollback) ;
+		callAjax("/accAcm/bigInsert.do", "post", "json", false, $("#myForm").serialize() , savecollback) ;
 		
 	}
 	
@@ -231,8 +229,8 @@
 
 		var chk = checkNotEmpty(
 				[
-						[ "notice_title", "제목을 입력해 주세요." ]
-					,	[ "notice_cont", "내용을 입력해 주세요" ]
+						[ "acnt_sbject_cd", "새로 만들 계정 대분류 코드를 입력해 주세요." ]
+					,	[ "acnt_sbject_name", "새로 만들 계정 대분류 이름을 입력해 주세요" ]
 				]
 		);
 
@@ -400,8 +398,60 @@
 	}
 	
 	
+	/** 상세코드 목록 조회 */
+	function fListComnDtlCod(currentPage, grp_cod, grp_cod_nm) {
+		
+		currentPage = currentPage || 1;
+		
+		// 그룹코드 정보 설정
+		$("#acnt_sbject_cd").val(acnt_sbject_cd);
+		$("#acnt_sbject_name").val(acnt_sbject_name);
+		
+		var param = {
+					acnt_sbject_cd : acnt_sbject_cd
+				,	currentPage : currentPage
+				,	pageSize : pageSizeComnDtlCod
+		}
+		
+		var resultCallback = function(data) {
+			flistDtlCodResult(data, currentPage);
+		};
+		
+		callAjax("/accAcm/listComnDtlCod.do", "post", "text", true, param, resultCallback);
+	}
 	
 	
+	
+	/** 상세코드 모달 실행 */
+	function fPopModalComnDtlCod(grp_cod, dtl_cod) {
+		
+		// 신규 저장
+		if (dtl_cod == null || dtl_cod=="") {
+		
+			if ($("#tmpGrpCod").val() == "") {
+				swal("그룹 코드를 선택해 주세요.");
+				return;
+			}
+			
+			// Tranjection type 설정
+			$("#action").val("I");
+			
+			// 상세코드 폼 초기화
+			fInitFormDtlCod();
+			
+			// 모달 팝업
+			gfModalPop("#layer2");
+
+		// 수정 저장
+		} else {
+			
+			// Tranjection type 설정
+			$("#action").val("U");
+			
+			// 상세코드 단건 조회
+			fSelectDtlCod(grp_cod, dtl_cod);
+		}
+	}
 	
 	
 	
@@ -413,6 +463,8 @@
 	<input type="hidden" id="action"  name="action"  />
 	<input type="hidden" id="notice_no"  name="notice_no"  />
 	<input type="hidden" id="pageno"  name="pageno"  />
+	<input type="hidden" id="acnt_sbject_cd" value="">
+	<input type="hidden" id="acnt_sbject_name value="">
 	
 	<!-- 모달 배경 -->
 	<div id="mask"></div>
@@ -445,22 +497,28 @@
                         
 						<p class="conTitle">
 							<span>계정과목 관리</span> <span class="fr"> 
-							<label for="acccombo">계정대분류 : </label>
-							<select id="acccombo" name="acccombo" style="width: 150px;">
-							
-							
-							</select> 
-							<label for="accdcombo">계정상세 : </label>
-							 <select id="accdcombo" name="accdcombo" style="width: 150px;" >
-							</select> 
-							
-							
-							<label for="accdcombo">구분 : </label>
-							<select id="typecombo" name="typecombo" style="width: 150px;">
+							<label for="acnt_dt_sbjct_inout">구분</label>
+							<select id="acnt_dt_sbjct_inout" name="acnt_dt_sbjct_inout" style="width: 150px;">
 							        <option value="" >전체</option>
 									<option value="1" >수입</option>
 									<option value="2" >비용</option>
-							</select>
+							</select> 
+<!-- 							<label for="acccombo">계정대분류 : </label> -->
+<!-- 							<select id="acccombo" name="acccombo" style="width: 150px;"> -->
+<!-- 							</select>  -->
+							
+							
+<!-- 							<label for="accdcombo">계정상세 : </label> -->
+<!-- 							 <select id="accdcombo" name="accdcombo" style="width: 150px;" > -->
+<!-- 							</select>  -->
+							
+							
+<!-- 							<label for="typecombo">구분 : </label> -->
+<!-- 							<select id="typecombo" name="typecombo" style="width: 150px;"> -->
+<!-- 							        <option value="" >전체</option> -->
+<!-- 									<option value="1" >수입</option> -->
+<!-- 									<option value="2" >비용</option> -->
+<!-- 							</select> -->
 							
 							<a href="" class="btnType blue" id="btnSearch" name="btn"><span>검  색</span></a>
 							 <a class="btnType blue" href="javascript:fn_openpopup();" name="modal"><span>등록</span></a>
@@ -471,11 +529,9 @@
 							<table class="col">
 								<caption>caption</caption>
 								<colgroup>
-									<col width="15%">
+									<col width="20%">
 									<col width="40%">
-									<col width="15%">
-									<col width="15%">
-									<col width="15%">
+									<col width="40%">
 								</colgroup>
 	
 								<thead>
@@ -483,8 +539,6 @@
 										<th scope="col">구분</th>
 										<th scope="col">계정 대분류코드</th>
 										<th scope="col">계정 대분류명</th>
-										<th scope="col">계정 상세코드</th>
-										<th scope="col">계정 상세명</th>
 									</tr>
 								</thead>
 								<tbody id="listnaccAcm"></tbody>
@@ -493,6 +547,41 @@
 	
 						<div class="paging_area"  id="accAcmPagination"> </div>
 						
+						<p class="conTitle mt50">
+							<span>계정 상세 코드</span> <span class="fr"> <a
+								class="btnType blue"  href="javascript:fPopModalComnDtlCod();" name="modal"><span>신규등록</span></a>
+							</span>
+						</p>
+	
+						<div class="divComDtlCodList">
+							<table class="col">
+								<caption>caption</caption>
+								<colgroup>
+									<col width="15%">
+									<col width="20%">
+									<col width="20%">
+									<col width="25%">
+									<col width="20%">
+								</colgroup>
+	
+								<thead>
+									<tr>
+										<th scope="col">구분</th>
+										<th scope="col">계정 대분류명</th>
+										<th scope="col">계정 상세코드</th>
+										<th scope="col">계정 상세명</th>
+										<th scope="col">ㅇ비고</th>
+									</tr>
+								</thead>
+								<tbody id="listComnDtlCod">
+									<tr>
+										<td colspan="12">그룹코드를 선택해 주세요.</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+						<div class="paging_area"  id="comnDtlCodPagination"> </div>
     
 					</div> <!--// content -->
 
@@ -504,10 +593,10 @@
 	</div>
 
 	<!-- 모달팝업 -->
-	<div id="layer1" class="layerPop layerType2" style="width: 600px;">
+	<div id="layer1" class="layerPop layerType2" style="width: 400px;">
 		<dl>
 			<dt>
-				<strong>그룹코드 관리</strong>
+				<strong>계정 대분류 관리</strong>
 			</dt>
 			<dd class="content">
 				<!-- s : 여기에 내용입력 -->
@@ -522,14 +611,12 @@
 
 					<tbody>
 						<tr>
-							<th scope="row">제목 <span class="font_red">*</span></th>
-							<td colspan="3"><input type="text" class="inputTxt p100" name="notice_title" id="notice_title" /></td>
+							<th scope="row">계정 대분류코드<span class="font_red">*</span></th>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_sbject_cd" id="acnt_sbject_cd" /></td>
 						</tr>
 						<tr>
-							<th scope="row">내용 <span class="font_red">*</span></th>
-							<td colspan="3">
-							    <textarea id="notice_cont" name="notice_cont"> </textarea>
-							</td>
+							<th scope="row">계정 대분류명<span class="font_red">*</span></th>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_sbject_name" id="acnt_sbject_name" /></td>
 						</tr>
 				
 					</tbody>
@@ -539,13 +626,15 @@
 
 				<div class="btn_areaC mt30">
 					<a href="" class="btnType blue" id="btnSave" name="btn"><span>저장</span></a> 
-					<a href="" class="btnType blue" id="btnDelete" name="btn"><span>삭제</span></a> 
 					<a href=""	class="btnType gray"  id="btnClose" name="btn"><span>취소</span></a>
 				</div>
 			</dd>
 		</dl>
 		<a href="" class="closePop"><span class="hidden">닫기</span></a>
 	</div>
+
+
+
 
 	<div id="layer2" class="layerPop layerType2" style="width: 600px;">
 		<dl>

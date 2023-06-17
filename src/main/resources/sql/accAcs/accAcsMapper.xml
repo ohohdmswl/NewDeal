@@ -87,17 +87,16 @@
        				   and ll.pdate <![CDATA[<=]]> DATE_ADD(STR_TO_DATE(#{end} , '%Y-%m-%d'), INTERVAL 1 DAY)
 			        </if>
 		        	<if test="(clicombo != null) and (!clicombo.equals(''))">
-			        	<choose> 
-			        		<when test="clicombo eq 1">
-			        			and ll.client = '태평물산'
-			        		</when>
+<!-- 			        	<choose>  -->
 <!-- 			        		<when test="clicombo eq 1"> -->
 <!-- 			        			and ll.client = '태평물산' -->
 <!-- 			        		</when> -->
-			        	</choose>
-			        	
-			        	
+<!-- 			        	</choose> -->
+			        	and ll.client = (select clnt_name from tb_clnt where clnt_no = #{clicombo})
 			        </if>
+			        
+			        
+			        
 			        <if test="(acccombo != null) and (!acccombo.equals(''))">
 			        	and ll.acnt_sbject_cd = #{acccombo}
 			        </if>
@@ -169,12 +168,12 @@
        				   and ll.pdate <![CDATA[<=]]> DATE_ADD(STR_TO_DATE(#{end} , '%Y-%m-%d'), INTERVAL 1 DAY)
 			        </if>
 		        	<if test="(clicombo != null) and (!clicombo.equals(''))">
-			        	<choose> 
-			        		<when test="clicombo eq 1">
-			        			and ll.client = '태평물산'
-			        		</when>
-			        	</choose>
-			        	
+<!-- 			        	<choose>  -->
+<!-- 			        		<when test="clicombo eq 1"> -->
+<!-- 			        			and ll.client = '태평물산' -->
+<!-- 			        		</when> -->
+<!-- 			        	</choose> -->
+			        	and ll.client = (select clnt_name from tb_clnt where clnt_no = #{clicombo})	
 			        	
 			        </if>
 			        <if test="(acccombo != null) and (!acccombo.equals(''))">
@@ -183,7 +182,7 @@
 			        <if test="(accdcombo != null) and (!accdcombo.equals(''))">
 			        	and ll.acnt_dt_sbject_cd = #{accdcombo}
 			        </if>
-		        </where>			
+		        </where>
 	</select>
 	
 	<select id="accountSearchSelectone" resultType="kr.happyjob.study.accAcs.model.accAcsModel">

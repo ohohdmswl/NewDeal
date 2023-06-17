@@ -143,6 +143,10 @@
 	
 	function popupinit(object) {
 		
+		var outamt = object.outamt.toLocaleString();
+		var inamt = object.inamt.toLocaleString();
+		
+		
 		if(object == "" || object == null || object == undefined) {
 // 			$("#bno").val("");		
 // 			$("#notice_cont").val("");
@@ -155,35 +159,61 @@
 			$("#bno").val(object.budget_no);		
 			$("#person").val(object.name);
 			$("#date").val(object.pdate);
+			$("#clientNm").val(object.client);
+			$("#inoutNm").val(object.acnt_dt_sbjct_inout);
+			
 			
 			if(JSON.stringify(object.order_no) ==  0){
 				
-				$("#Ono").val("");
+				$("#Ono").val("-");
 			} else
 			
 			$("#Ono").val(object.order_no);
 			
 			if(object.dlv_no == 0){
 				
-				$("#Dno").val("");
+				$("#Dno").val("-");
 			} else
 			$("#Dno").val(object.dlv_no);
 
 			if(object.expen_report_no == 0){
 				
-				$("#Eno").val("");
+				$("#Eno").val("-");
 			} else
 			
 			$("#Eno").val(object.expen_report_no);
 			$("#Suname1").val(object.acnt_dt_sbjct_name);
-			$("#E1").val(object.outamt);
-			$("#R1").val(object.inamt);
+			
+			$("#Suname2").val("현금");
+			
+			$("#E1").val(outamt);
+			
+			
+			$("#R1").val(inamt);
 			
 			
 			
-			$("#TE").val(object.outamt);
-			$("#TR").val(object.inamt);
+			if(object.outamt == 0){ // 수익(비용 = 0) (차) 현금 / (대) 상품매출
+			$("#E2").val(inamt);
+			$("#R2").val("0"); 
+			}
 			
+			
+			if(object.inamt == 0){ // 비용 (수익 = 0) (차) 비용 / (대) 현금
+			$("#E2").val("0");
+			$("#R2").val(outamt);
+			}
+			
+			
+			if(object.outamt == 0){ // 수익(비용 = 0) (차) 현금 / (대) 상품매출
+			$("#TE").val(inamt);
+			$("#TR").val(inamt);
+			}
+			
+			if(object.inamt == 0){ 
+			$("#TE").val(outamt);
+			$("#TR").val(outamt).toLocaleString();
+			}
 // 			$("#btnDelete").show();
 			
 		}
@@ -210,199 +240,11 @@
 		callAjax("/accAcs/accountSearchSelectone.do", "post", "json", false, param, selectoncallback) ;
 		
 	}
-	
-	function fn_save() {
-		
-		if ( ! fn_Validate() ) {
-			return;
-		}
-		
-		var param = {
-				action : $("#action").val(),
-				notice_no : $("#notice_no").val(),
-				notice_title : $("#notice_title").val(),
-				notice_cont : $("#notice_cont").val()
-		}
-		
-		var savecollback = function(reval) {
-			console.log( JSON.stringify(reval) );
-			
-			if(reval.returncval > 0) {
-				alert("저장 되었습니다.");
-				gfCloseModal();
-				
-				if($("#action").val() == "U") {
-					fn_noticelist($("#pageno").val());
-				} else {
-					fn_noticelist();
-				}
-			}  else {
-				alert("오류가 발생 되었습니다.");				
-			}
-		}
-		
-		//callAjax("/mngNot/noticesave.do", "post", "json", false, param, savecollback) ;
-		callAjax("/mngNot/noticesave.do", "post", "json", false, $("#myForm").serialize() , savecollback) ;
-		
-	}
-	
-	function fn_Validate() {
 
-		var chk = checkNotEmpty(
-				[
-						[ "notice_title", "제목을 입력해 주세요." ]
-					,	[ "notice_cont", "내용을 입력해 주세요" ]
-				]
-		);
+	
 
-		if (!chk) {
-			return;
-		}
 
-		return true;
-	}
-	
-	//////////////////////////   위는 파일 업이 처리
-	/////////////////////////    file upload
-	
-	function fn_openpopupfile() {
-        popupinitfile();
-		
-		// 모달 팝업
-		gfModalPop("#layer2");
-	}
-	
-   function popupinitfile(object) {
-		
-		if(object == "" || object == null || object == undefined) {
-// 			$("#bno").val("");		
-// 			$("#file_notice_cont").val("");
-// 			$("#notice_no").val("");
-// 			$("#upfile").val("");		
-			
-// 			$("#previewdiv").empty();
-			
-// 			$("#btnDeleteFile").hide();
-			
-// 			$("#action").val("I");	
-		} else {
 
-			$("#bno").val(object.budget_no);		
-			$("#file_notice_cont").val(object.notice_cont);
-			$("#notice_no").val(object.notice_no);
-			$("#upfile").val("");		
-			
-			var inserthtml = "<a href='javascript:fn_filedownload()'>";
-			
-			if(object.file_name == "" || object.file_name == null || object.file_name == undefined) {
-				inserthtml += "";
-			} else {
-				var selfile = object.file_name;
-			    var selfilearr = selfile.split(".");
-			    var lastindex = selfilearr.length - 1;
-			    if(selfilearr[lastindex].toLowerCase() == "jpg" || selfilearr[lastindex].toLowerCase() == "gif" || selfilearr[lastindex].toLowerCase() == "jpge" || selfilearr[lastindex].toLowerCase() == "png") {
-			    	  inserthtml += "<img src='" + object.logic_path + "' style='width:100px; height:80px' />";
-			    } else {
-			    	  inserthtml += object.file_name;
-			    }				
-			} 
-			
-
-			inserthtml += "</a>"
-			
-			$("#previewdiv").empty().append(inserthtml);
-			
-			$("#btnDeleteFile").show();
-			
-			$("#action").val("U");	
-		}
-	}
-	
-	function preview(event) {
-		var image = event.target;
-		  
-		//alert(image.files[0].file_name + " : " + image.files[0].file_nm + " : " + image.files[0].name);
-		
-		 if(image.files[0]){
-			  //alert(window.URL.createObjectURL(image.files[0]));
-			 
-			  var selfile = image.files[0].name;
-		      var selfilearr = selfile.split(".");
-		      var inserthtml = "";
-		      var lastindex = selfilearr.length - 1;
-		      
-		      
-		      if(selfilearr[lastindex].toLowerCase() == "jpg" || selfilearr[lastindex].toLowerCase() == "gif" || selfilearr[lastindex].toLowerCase() == "jpge" || selfilearr[lastindex].toLowerCase() == "png") {
-		    	  inserthtml = "<img src='" + window.URL.createObjectURL(image.files[0]) + "' style='width:100px; height:80px' />";
-		      } else {
-		    	  inserthtml = selfile;
-		      }
-			  
-			  
-			  $("#previewdiv").empty().append(inserthtml);
-		}
-		
-		
-	}
-	
-	function fn_savefile() {
-		
-		var frm = document.getElementById("myForm");
-		frm.enctype = 'multipart/form-data';
-		var fileData = new FormData(frm);
-		
-		var filesavecallback = function(returnval) {
-			console.log( JSON.stringify(returnval) );
-			
-			if(returnval.returncval > 0) {
-				alert("저장 되었습니다.");
-				gfCloseModal();
-				
-				if($("#action").val() == "U") {
-					fn_noticelist($("#pageno").val());
-				} else {
-					fn_noticelist();
-				}
-			}  else {
-				alert("오류가 발생 되었습니다.");				
-			}
-		}
-				
-		callAjaxFileUploadSetFormData("/mngNot/noticesavefile.do", "post", "json", true, fileData, filesavecallback);
-		
-	}
-	
-	function fn_selectonefile(no) {
-		
-		//alert(no);
-		
-		var param = {
-				notice_no : no
-		}
-		
-		var selectoncallback = function(returndata) {			
-			console.log( JSON.stringify(returndata) );
-								
-			popupinitfile(returndata.noticesearch);
-			
-			// 모달 팝업
-			gfModalPop("#layer2");
-			
-		}
-		
-		callAjax("/mngNot/noticeselectone.do", "post", "json", false, param, selectoncallback) ;
-		
-	}
-	
-	function fn_filedownload() {
-		alert("다운로드");
-		
-		var params = "";
-		params += "<input type='hidden' name='notice_no' id='notice_no' value='"+ $("#notice_no").val() +"' />";
-		
-		jQuery("<form action='/mngNot/downloadnoticefile.do' method='post'>"+params+"</form>").appendTo('body').submit().remove();
-		
-	}
 	
 	
 	
@@ -536,60 +378,91 @@
 				<table class="row">
 					<caption>caption</caption>
 					<colgroup>
-						<col width="120px">
-						<col width="*">
-						<col width="120px">
-						<col width="*">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
+						<col width="12.5%">
 					</colgroup>
 
 					<tbody>
 						<tr>
 							<th scope="row">전표번호</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="bno" id="bno" style="border:none"/></td>
+							<td ><input type="text" class="inputTxt p100 acv" name="bno" id="bno" style="border:none"/></td>
+							<th scope="row">구분</th>
+							<td ><input type="text" class="inputTxt p100 acv" name="inoutNm" id="inoutNm" style="border:none"/></td>
 							<th scope="row">담당자</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="person" id="person" style="border:none"/></td>
+							<td ><input type="text" class="inputTxt p100 acv" name="person" id="person" style="border:none"/></td>
 							<th scope="row">일자</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="date" id="date" style="border:none" /></td>
+							<td ><input type="text" class="inputTxt p100 acv" name="date" id="date" style="border:none" /></td>
 						</tr>
 						<tr>
-							<th scope="row">주문번호</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Ono" id="Ono" style="border:none"/></td>
-							<th scope="row">발주번호</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Dno" id="Dno" style="border:none"/></td>
-							<th scope="row">지출번호</th>
-							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Eno" id="Eno" style="border:none"/></td>
+							<th scope="row">거래처</th>
+							<td ><input type="text" class="inputTxt p100 acv" name="clientNm" id="clientNm" style="border:none"/></td>
+							<th >주문번호</th>
+							<td ><input type="text" class="inputTxt p100 acv" name="Ono" id="Ono" style="border:none"/></td>
+							<th >발주번호</th>
+							<td ><input type="text" class="inputTxt p100 acv" name="Dno" id="Dno" style="border:none"/></td>
+							<th >지출번호</th>
+							<td ><input type="text" class="inputTxt p100 acv" name="Eno" id="Eno" style="border:none"/></td>
 						</tr>
+<!-- 						<tr> -->
+<!-- 							<th scope="row">전표번호</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="bno" id="bno" style="border:none"/></td> -->
+<!-- 							<th scope="row">구분</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="inoutNm" id="inoutNm" style="border:none"/></td> -->
+<!-- 							<th scope="row">담당자</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="person" id="person" style="border:none"/></td> -->
+<!-- 							<th scope="row">일자</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="date" id="date" style="border:none" /></td> -->
+<!-- 						</tr> -->
+<!-- 						<tr> -->
+<!-- 							<th scope="row">거래처</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="clientNm" id="clientNm" style="border:none"/></td> -->
+<!-- 							<th scope="row">주문번호</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Ono" id="Ono" style="border:none"/></td> -->
+<!-- 							<th scope="row">발주번호</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Dno" id="Dno" style="border:none"/></td> -->
+<!-- 							<th scope="row">지출번호</th> -->
+<!-- 							<td colspan="3"><input type="text" class="inputTxt p100 acv" name="Eno" id="Eno" style="border:none"/></td> -->
+<!-- 						</tr> -->
 						
 						<tr>
-							<th scope="row" colspan="4">계정과목</th>
-							<th scope="row" colspan="4">비용</th>
-							<th scope="row" colspan="4">수익</th>
+							<th scope="row" td colspan="4">계정과목</th>
+							<th scope="row" td colspan="2">차변</th>
+							<th scope="row" td colspan="2">대변</th>
+<!-- 							<th scope="row" colspan="4">계정과목</th> -->
+<!-- 							<th scope="row" colspan="4">차변</th> -->
+<!-- 							<th scope="row" colspan="4">대변</th> -->
 							
 						</tr>
 						<tr>
 							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="Suname1" id="Suname1" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="E1" id="E1" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="R1" id="R1" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="E1" id="E1" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="R1" id="R1" style="border:none"/></td>
 						</tr>
 						<tr>
 							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="Suname2" id="Suname2" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="E2" id="E2" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="R2" id="R2" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="E2" id="E2" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="R2" id="R2" style="border:none"/></td>
 						</tr>
 						<tr>
 							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="Suname3" id="Suname3" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="E3" id="E3" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="R3" id="R3" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="E3" id="E3" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="R3" id="R3" style="border:none"/></td>
 						</tr>
 						<tr>
 							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="Suname4" id="Suname4" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="E4" id="E4" style="border:none"/></td>
-							<td colspan="4"><input type="text" class="inputTxt p100 acv" name="R4" id="R4" style="border:none" /></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="E4" id="E4" style="border:none"/></td>
+							<td colspan="2"><input type="text" class="inputTxt p100 acv" name="R4" id="R4" style="border:none" /></td>
 						</tr>
 						<tr>
 							<th scope="row" colspan="4">합계</th>
-							<th colspan="4"><input type="text" class="inputTxt p100 acv" name="TE" id="TE" style="border:none; background: #bbc2cd; font-weight: bold;" /></th>
-							<th colspan="4"><input type="text" class="inputTxt p100 acv" name="TR" id="TR" style="border:none; background: #bbc2cd; font-weight: bold;" /></th>
+							<th colspan="2"><input type="text" class="inputTxt p100 acv" name="TE" id="TE" style="border:none; background: #bbc2cd; font-weight: bold;" /></th>
+							<th colspan="2"><input type="text" class="inputTxt p100 acv" name="TR" id="TR" style="border:none; background: #bbc2cd; font-weight: bold;" /></th>
 						</tr>
 					</tbody>
 				</table>
