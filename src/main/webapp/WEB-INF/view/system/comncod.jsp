@@ -484,6 +484,7 @@
 		$("#tmpGrpCod").val(grp_cod);
 		$("#tmpGrpCodNm").val(grp_cod_nm);
 		
+		
 		var param = {
 					grp_cod : grp_cod
 				,	currentPage : currentPage
@@ -506,6 +507,7 @@
 		
 		var $data = $( $(data).html() );
 
+		
 		// 신규 목록 생성
 		var $listComnDtlCod = $data.find("#listComnDtlCod");		
 		$("#listComnDtlCod").append($listComnDtlCod.children());
