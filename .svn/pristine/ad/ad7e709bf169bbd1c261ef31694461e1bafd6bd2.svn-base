@@ -67,6 +67,8 @@
 		fRegisterButtonClickEvent();
 		
 		fn_accAcmList();
+		
+		
 	});
 	
 
@@ -103,125 +105,8 @@
 					gfCloseModal();
 					break;
 			}
-		})
-	};
-	
-	// 중복검사 - 계정대분류 코드
-	function fn_LAccCdChk(saveyn) {
-		
-		var returnval = "N";
-		
-		if(!fn_Validate()){
-			$("#chkLCd").val("0");
-			return "N";
-			
-		} else {
-			$.ajax({
-				
-				type : "post"
-				, url : "/accAcm/LCdDupChk.do"
-				, data : { acnt_sbject_cd : $("#acnt_sbject_cd").val()}
-				, dataType : "json"
-				, async : false
-				, success : function(result) {
-					console.log("AJAX 성공")
-					console.log(result)
-					
-					
-					
-					if(result==1){
-						console.log("중복")
-						swal("이미 해당 코드가 있습니다. 다른 코드를 입력해주세요.");
-						$("#chkLCd").val("0");
-						
-						returnval = "N";
-						
-					}else if (result == 0){
-						console.log("중복아님")
-						
-						if(saveyn != "Y") {
-							swal("사용가능한 계정코드입니다.");
-						}
-						
-						$("#chkLCd").val("1");
-						returnval = "Y"
-					}
-					return returnval;
-				}
-				,error : function() {
-					console.log("AJAX 실패")
-				}
-			})
-		}
-	};
-	// 중복검사 - 계정상세 코드
-	function fn_SAccDtCdChk(saveyn) {
-		
-		var returnval = "N";
-		
-		if(!fn_SValidate()){
-			return "N";
-			
-		} else {
-			$.ajax({
-				
-				type : "post"
-				, url : "/accAcm/SCdDupChk.do"
-				, data : { acnt_dt_sbject_cd : $("#acnt_dt_sbject_cd").val()}
-				, dataType : "json"
-				, async : false
-				, success : function(result) {
-					console.log("AJAX 성공")
-					console.log(result)
-					
-					
-					
-					if(result==1){
-						console.log("중복")
-						swal("이미 해당 코드가 있습니다. 다른 코드를 입력해주세요.");
-						$("#chkLNm").val("0");
-						
-						returnval = "N";
-						
-					}else if (result == 0){
-						console.log("중복아님")
-						
-						if(saveyn != "Y") {
-							swal("사용가능한 상세코드입니다.");
-						}
-						
-						$("#chkLNm").val("1");
-						returnval = "Y"
-					}
-					return returnval;
-				}
-				,error : function() {
-					console.log("AJAX 실패")
-				}
-			})
-		}
-	};
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		});
+	}
 	
 	// 계정대분류 조회
 	function fn_accAcmList(pagenum) {
@@ -391,70 +276,45 @@
 	
 
 	function fn_bigInsert() {
-
 		
+// 		if ( ! fn_Validate() ) {
+// 			return;
+// 		}
 		
-		if(fn_LAccCdChk("Y") == "N") {
-			return;
-		} else {
-			
-			 if ($("#chkLCd").val() == "0") {
-					swal("계정코드 중복확인을 진행해주세요.").then(function() {
-						$("#acnt_sbject_cd").focus();
-					  })
-				return;	  
-			 };
-			 
-			
-			var param = {
-					action : $("#action").val(),
-					acnt_sbject_cd : $("#acnt_sbject_cd").val(),
-					acnt_sbject_name : $("#acnt_sbject_name").val(),
-					acnt_sbjct_inout : $("#M_acnt_sbjct_inout").val()
-					
-			}
-			
-			var savecollback = function(reval) {
-				console.log( JSON.stringify(reval) );
+		var param = {
+				action : $("#action").val(),
+				acnt_sbject_cd : $("#acnt_sbject_cd").val(),
+				acnt_sbject_name : $("#acnt_sbject_name").val(),
+				acnt_sbjct_inout : $("#M_acnt_sbjct_inout").val()
 				
-				if(reval.returncval > 0) {
-					alert("저장 되었습니다.");
-					gfCloseModal();
-					
-					if($("#action").val() == "U") {
-						fn_accAcmList($("#pageno").val());
-					} else {
-						fn_accAcmList();
-					}
-				}  else {
-					alert("오류가 발생 되었습니다.");				
-				}
-			}
-			
-			callAjax("/accAcm/bigInsert.do", "post", "json", true, $("#myForm").serialize() , savecollback) ;
-			
-			
 		}
 		
-
+		var savecollback = function(reval) {
+			console.log( JSON.stringify(reval) );
+			
+			if(reval.returncval > 0) {
+				alert("저장 되었습니다.");
+				gfCloseModal();
+				
+				if($("#action").val() == "U") {
+					fn_accAcmList($("#pageno").val());
+				} else {
+					fn_accAcmList();
+				}
+			}  else {
+				alert("오류가 발생 되었습니다.");				
+			}
+		}
+		
+		callAjax("/accAcm/bigInsert.do", "post", "json", false, $("#myForm").serialize() , savecollback) ;
 		
 	}
 	
 	function fn_smallInsert() {
 		
-		
-		if(fn_SAccDtCdChk("Y") == "N") {
+		if ( ! fn_SValidate() ) {
 			return;
-		} else {
-			
-			 if ($("#chkLNm").val() == "0") {
-					swal("계정상세코드 중복확인을 진행해주세요.").then(function() {
-						$("#acnt_sbject_cd").focus();
-					  })
-				return;	  
-			 };
-			 
-		
+		}
 		
 		var param = {
 				action : $("#action").val(),
@@ -483,7 +343,6 @@
 		callAjax("/accAcm/smallInsert.do", "post", "json", false, $("#myForm").serialize() , savecollback) ;
 		
 	}
-	}
 	
 	function fn_Validate() {
 
@@ -491,8 +350,8 @@
 		
 		var chk = checkNotEmpty(
 				[
-						[ "acnt_sbject_cd", "새로 만들 계정 대분류 코드를 입력해 주세요." ]
-					,	[ "acnt_sbject_name", "새로 만들 계정 대분류 이름을 입력해 주세요" ]
+						[ "aacnt_sbject_cd", "새로 만들 계정 대분류 코드를 입력해 주세요." ]
+					,	[ "aacnt_sbject_name", "새로 만들 계정 대분류 이름을 입력해 주세요" ]
 				]
 		);
 
@@ -558,15 +417,6 @@
 	
 	
 	
-	
-	
-	
-	
-	//유효성검사
-	
-	
-	
-	
 </script>
 
 </head>
@@ -580,9 +430,6 @@
 	
 	<input type="hidden" id="tmpAcnt_sbject_cd" value="">
 	<input type="hidden" id="tmpAcnt_sbject_name" value="">
-	
-	 <input type="hidden" name="chkLCd" id="chkLCd" value="2"/>
-	 <input type="hidden" name="chkLNm" id="chkLNm" value="2"/>
 	
 	<!-- 모달 배경 -->
 	<div id="mask"></div>
@@ -615,7 +462,7 @@
                         
 						<p class="conTitle">
 							<span>계정과목 관리</span> <span class="fr"> 
-							<label for="acnt_sbjct_inout" style=" font-size: 15px; font-weight: bold; margin-right: 10px;">구분</label>
+							<label for="acnt_sbjct_inout">구분</label>
 							<select id="acnt_sbjct_inout" name="acnt_sbjct_inout" style="width: 150px;">
 							        <option value="" >전체</option>
 									<option value="1" >수입</option>
@@ -666,8 +513,8 @@
 						<div class="paging_area"  id="accAcmPagination"> </div>
 						
 						<p class="conTitle mt50">
-							<span>계정 상세 코드</span> <span class="fr"> 
-							<a class="btnType blue"  href="javascript:fn_accDtlPop();" name="modal"><span>신규등록</span></a>
+							<span>계정 상세 코드</span> <span class="fr"> <a
+								class="btnType blue"  href="javascript:fn_accDtlPop();" name="modal"><span>신규등록</span></a>
 							</span>
 						</p>
 	
@@ -711,7 +558,7 @@
 	</div>
 
 	<!-- 모달팝업 -->
-	<div id="layer1" class="layerPop layerType2" style="width: 600px;">
+	<div id="layer1" class="layerPop layerType2" style="width: 400px;">
 		<dl>
 			<dt>
 				<strong>계정 대분류 관리</strong>
@@ -728,24 +575,17 @@
 					</colgroup>
 
 					<tbody>
-						<tr style="height: 80px;">
+						<tr>
 							<th scope="row">계정 대분류코드<span class="font_red">*</span></th>
-							<td colspan="2">
-								<input type="text" class="inputTxt p100" style="" name="acnt_sbject_cd" id="acnt_sbject_cd"  placeholder="숫자 4자리를 입력해주세요.(ex.1111)"  />
-								<div onclick="fn_LAccCdChk()" style="padding: 3px 8px 3px 8px;border: 0px solid #cdcdcd; width: 50px; border-radius : 6px; text-align: center; background: #cdcdcd; margin-top: 10px;">
-									<span id ="LCdDupBtn" name = "LCdDupBtn" > 중복확인</span>
-								</div>
-							</td>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_sbject_cd" id="acnt_sbject_cd" /></td>
 						</tr>
-						
-						
 						<tr>
 							<th scope="row">계정 대분류명<span class="font_red">*</span></th>
-							<td colspan="2"><input type="text" class="inputTxt p100"  name="acnt_sbject_name" id="acnt_sbject_name" placeholder="한글로 입력해주세요.(ex. 매출)" /></td>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_sbject_name" id="acnt_sbject_name" /></td>
 						</tr>
 						<tr>
 							<th scope="row">구분<span class="font_red">*</span></th>
-							<td colspan="2">
+							<td colspan="3">
 								<select id="M_acnt_sbjct_inout" name="M_acnt_sbjct_inout" style="width: 150px;">
 										<option value="1" >수입</option>
 										<option value="2" >비용</option>
@@ -796,20 +636,14 @@
 						<tr>
 							<th scope="row">계정대분류명 <span class="font_red">*</span></th>
 							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_sbject_namee" id="acnt_sbject_namee" /></td>
-							
 						</tr>
-						<tr style="height: 80px;">
+						<tr>
 							<th scope="row">계정상세코드 <span class="font_red">*</span></th>
-							<td colspan="3">
-								<input type="text" class="inputTxt p100" name="acnt_dt_sbject_cd" id="acnt_dt_sbject_cd" placeholder="숫자 4자리를 입력해주세요.(ex.1000)"/>
-								<div onclick="fn_SAccDtCdChk()" style="padding: 3px 8px 3px 8px;border: 0px solid #cdcdcd; width: 50px; border-radius : 6px; text-align: center; background: #cdcdcd; margin-top: 10px;">
-									<span id ="SCdDupBtn" name = "SCdDupBtn" > 중복확인2</span>
-								</div>
-							</td>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_dt_sbject_cd" id="acnt_dt_sbject_cd" /></td>
 						</tr>
 						<tr>
 							<th scope="row">계정상세코드명 <span class="font_red">*</span></th>
-							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_dt_sbjct_name" id="acnt_dt_sbjct_name" placeholder="한글로 입력해주세요.(ex. 제품매출)"/></td>
+							<td colspan="3"><input type="text" class="inputTxt p100" name="acnt_dt_sbjct_name" id="acnt_dt_sbjct_name" /></td>
 						</tr>
 
 					</tbody>
