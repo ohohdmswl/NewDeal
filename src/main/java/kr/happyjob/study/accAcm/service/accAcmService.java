@@ -35,6 +35,10 @@ public interface accAcmService {
 
 	int SCdDupChk(Map<String, Object> paramMap);
 
+	int maxMethod(Map<String, Object> paramMap);
+
+	String maxMethod3(Map<String, Object> paramMap);
+
 
 
 	

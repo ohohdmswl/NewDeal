@@ -90,4 +90,15 @@ public class accAcmServiceImpl implements accAcmService {
 	public int SCdDupChk(Map<String, Object> paramMap) {
 		return AccAcmDao.SCdDupChk(paramMap);
 	}
+
+	@Override
+	public int maxMethod(Map<String, Object> paramMap) {
+		return AccAcmDao.maxMethod(paramMap);
+	}
+	
+	@Override
+	public String maxMethod3(Map<String, Object> paramMap) {
+		return AccAcmDao.maxMethod3(paramMap);
+	}
+	
 }	

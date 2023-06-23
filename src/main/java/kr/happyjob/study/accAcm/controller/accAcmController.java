@@ -246,10 +246,19 @@ public class accAcmController {
 		   logger.info("+ paramMapSD값 체크 " + paramMap);
 		   logger.info("+ result값SD 체크 " + result);
 		   
+		
+		   int max2 = AccAcmService.maxMethod(paramMap);
+		   String max3 = AccAcmService.maxMethod3(paramMap);
+		   
+		   logger.info("+ max2 체크 " + max2);
+		   logger.info("+ max3 체크 " + max3);
 		   
 		   return result;
 		   
 	   }
+	   
+	   
+	   
 	   
 	   
 	   

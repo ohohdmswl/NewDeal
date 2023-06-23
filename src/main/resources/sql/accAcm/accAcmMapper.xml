@@ -93,7 +93,15 @@
 	</select>   
 	    
 	    
+	 <select id="maxMethod" resultType="int">
+	 select CAST(MAX(CAST(loginID AS UNSIGNED)) AS CHAR) FROM tb_userinfo
+	 
+	 </select>   
 	    
+	 <select id="maxMethod3" resultType="String">
+	 select CAST(MAX(CAST(loginID AS UNSIGNED)) AS CHAR) FROM tb_userinfo
+	 
+	 </select>   
 	
 	
 </mapper>

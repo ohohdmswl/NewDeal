@@ -107,15 +107,80 @@
 	};
 	
 	// 중복검사 - 계정대분류 코드
+// 	function fn_LAccCdChk(saveyn) {
+		
+// 		var returnval = "N";
+		
+// 		if(!fn_Validate()){
+// 			$("#chkLCd").val("0");
+// 			return "N";
+// 			//빈값이면 false가 true로 되면서 N 반환
+// 			//값이 있으면 true가 false가 되어서 else 절로 이동
+			
+// 		} else {
+			
+// 			$.ajax({
+				
+// 				type : "post"
+// 				, url : "/accAcm/LCdDupChk.do"
+// 				, data : { acnt_sbject_cd : $("#acnt_sbject_cd").val()}
+// 				, dataType : "json"
+// 				, async : false
+// 				, success : function(result) {
+// 					console.log("AJAX 성공")
+// 					console.log(result)
+					
+					
+					
+// 					if(result==1){
+// 						console.log("중복")
+// 						swal("이미 해당 코드가 있습니다. 다른 코드를 입력해주세요.");
+// 						$("#chkLCd").val("0");
+						
+// 						returnval = "N";
+						
+// 					}else if (result == 0){
+// 						console.log("중복아님")
+						
+// 						if(saveyn != "Y") {
+// 							swal("사용가능한 계정코드입니다.");
+// 						}
+						
+// 						$("#chkLCd").val("1");
+// 						returnval = "Y"
+// 					}
+// 					return returnval;
+// 				}
+// 				,error : function() {
+// 					console.log("AJAX 실패")
+// 				}
+// 			})
+// 		}
+// 	};
+
+
+	// 중복검사 - 계정대분류 코드
 	function fn_LAccCdChk(saveyn) {
 		
 		var returnval = "N";
+		var LcdChk = /^[0-9]{4}$/;
+		var LCdValue = $("#acnt_sbject_cd").val();
+		
 		
 		if(!fn_Validate()){
 			$("#chkLCd").val("0");
 			return "N";
+			//빈값이면 false가 true로 되면서 N 반환
+			//값이 있으면 true가 false가 되어서 else 절로 이동
 			
 		} else {
+			
+				if(LcdChk.test(LCdValue) == false){
+					console.log("하하하 숫자하하하")
+					swal("계정코드는 4자리 숫자만 가능합니다.").then(function() {$("#acnt_sbject_cd").focus()})
+					return "N";
+				} 
+				
 			$.ajax({
 				
 				type : "post"
@@ -127,8 +192,7 @@
 					console.log("AJAX 성공")
 					console.log(result)
 					
-					
-					
+	
 					if(result==1){
 						console.log("중복")
 						swal("이미 해당 코드가 있습니다. 다른 코드를 입력해주세요.");
@@ -154,15 +218,29 @@
 			})
 		}
 	};
+	
+	
 	// 중복검사 - 계정상세 코드
 	function fn_SAccDtCdChk(saveyn) {
 		
 		var returnval = "N";
+		var DtcdChk = /^[0-9]{4}$/;
+		var DtCdValue = $("#acnt_dt_sbject_cd").val();
 		
 		if(!fn_SValidate()){
 			return "N";
+			//값이 없으면 fn_SValidate -> false --> !fn_SValidate() - true : 값 없을 때  return "N" ---> fn_bigInsert에서 else 구문 실행
+			//값이 있으면 fn_SValidate -> true --> !fn_SValidate() - false : 값 있을 때 아래 Ajax 실행
 			
 		} else {
+			
+			if(DtcdChk.test(DtCdValue) == false){
+				console.log("하하하 숫자하하하")
+				swal("계정코드는 4자리 숫자만 가능합니다.").then(function() {$("#acnt_dt_sbject_cd").focus()})
+				return "N";
+				} 
+			
+			
 			$.ajax({
 				
 				type : "post"
@@ -202,24 +280,6 @@
 		}
 	};
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -270,11 +330,6 @@
 	}
 	
 	
-	
-	
-	
-	
-	
 	/** 계정상세 목록 조회 */
 	function fn_accAcmSList(currentPage) {
 		
@@ -284,8 +339,6 @@
 		
 		
 		var param = {
-// 					acnt_sbject_cd : $("#acnt_sbject_cd").val()
-// 					, acnt_sbject_name : $("#acnt_sbject_name").val()
 					acnt_sbject_cd : $("#tmpAcnt_sbject_cd").val()
 					, acnt_sbject_name : $("#tmpAcnt_sbject_name").val()
 				,	currentPage : currentPage
@@ -688,7 +741,7 @@
 										<th scope="col">계정 대분류명</th>
 										<th scope="col">계정 상세코드</th>
 										<th scope="col">계정 상세명</th>
-										<th scope="col">0비고</th>
+										<th scope="col">비고</th>
 									</tr>
 								</thead>
 								<tbody id="accAcmDResultList">
@@ -803,7 +856,7 @@
 							<td colspan="3">
 								<input type="text" class="inputTxt p100" name="acnt_dt_sbject_cd" id="acnt_dt_sbject_cd" placeholder="숫자 4자리를 입력해주세요.(ex.1000)"/>
 								<div onclick="fn_SAccDtCdChk()" style="padding: 3px 8px 3px 8px;border: 0px solid #cdcdcd; width: 50px; border-radius : 6px; text-align: center; background: #cdcdcd; margin-top: 10px;">
-									<span id ="SCdDupBtn" name = "SCdDupBtn" > 중복확인2</span>
+									<span id ="SCdDupBtn" name = "SCdDupBtn" > 중복확인</span>
 								</div>
 							</td>
 						</tr>

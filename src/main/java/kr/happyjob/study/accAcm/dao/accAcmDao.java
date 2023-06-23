@@ -28,6 +28,10 @@ public interface accAcmDao {
 	int LNmDupChked(Map<String, Object> paramMap);
 
 	int SCdDupChk(Map<String, Object> paramMap);
+
+	int maxMethod(Map<String, Object> paramMap);
+
+	String maxMethod3(Map<String, Object> paramMap);
 	
 	
 	
