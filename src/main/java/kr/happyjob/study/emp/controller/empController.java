@@ -69,7 +69,7 @@ public class empController {
     public Map<String, Object> empSelectOne(Model model, @RequestParam Map<String, Object> paramMap, HttpServletRequest request,
                                             HttpServletResponse response, HttpSession session) throws Exception{
         logger.info("+ Start " + className + ".empselectone");
-        logger.info("   - paramMap : " + paramMap);
+        logger.info("   - paramMapdddddd : " + paramMap);
 
         EmpModel empSearch = empService.empSelectOne(paramMap);
 
@@ -96,25 +96,47 @@ public class empController {
         paramMap.put("loginid", (String) session.getAttribute("loginId"));
 
 
+
         int returncval = 0;
+
 
         if("I".equals(action)) {
             logger.info("   - insert : " + paramMap);
             returncval = empService.empInsert(paramMap);
+            
+            String max3 = empService.maxMethod3(paramMap);
+            logger.info("   - max2 : " + max3);
+            paramMap.put("max3",max3);
+             empService.vaceInsert(paramMap);
         } else if("U".equals(action)) {
             logger.info("   - update : " + paramMap);
+            logger.info("   - updateemp_sexemp_sex : " + paramMap.get("emp_sex"));
+            
+            
+            logger.info("   - vaceUpdate안녕 : " + paramMap);
             returncval = empService.empUpdate(paramMap);
+            empService.vaceUpdate(paramMap);
+            
+            
+            logger.info("   - vaceUpdate안녕안녕 : " + paramMap);
+            
         } else if("D".equals(action)) {
             logger.info("   - delete : " + paramMap);
             returncval = empService.empDelete(paramMap);
         }
+
+
+
+
 
         Map<String, Object> returnmap = new HashMap<String, Object>();
 
         returnmap.put("returncval", returncval);
 
         logger.info("+ End " + className + ".empSave");
+        logger.info("+ End " + className + ".empSave");
 
         return returnmap;
     }
+
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 @Service
 
-public class EmpServiceImp implements EmpService{
+public class EmpServiceImpl implements EmpService{
 
     @Autowired
     EmpDao empDao;
@@ -26,6 +26,13 @@ public class EmpServiceImp implements EmpService{
     private String sal_ko_rate;
     @Value("${sal_san_rate}")
     private String sal_san_rate;
+
+    @Override
+    public String maxMethod3(Map<String, Object> paramMap) {
+        return empDao.maxMethod3(paramMap);
+    }
+
+
 
     @Override
     public List<EmpModel> empList(Map<String, Object> paramMap) throws Exception {
@@ -42,15 +49,15 @@ public class EmpServiceImp implements EmpService{
         return empDao.empSelectOne(paramMap);
     }
 
-    @Override
+ @Override
     public int empInsert(Map<String, Object> paramMap) throws Exception {
-        double emp_yr_sal = (double) paramMap.get("emp_yr_sal");
+        double emp_yr_sal = Integer.parseInt((String)paramMap.get("emp_yr_sal")) ;
         double sal_pre =emp_yr_sal/12;
 
-        double sal_kuk = sal_pre * Integer.parseInt(sal_kuk_rate);
-        double sal_kun = sal_pre * Integer.parseInt(sal_kun_rate);
-        double sal_ko = sal_pre * Integer.parseInt(sal_ko_rate);
-        double sal_san = sal_pre * Integer.parseInt(sal_san_rate);
+        double sal_kuk = sal_pre * Double.valueOf(sal_kuk_rate);
+        double sal_kun = sal_pre * Double.valueOf(sal_kun_rate);
+        double sal_ko = sal_pre * Double.valueOf(sal_ko_rate);
+        double sal_san = sal_pre * Double.valueOf(sal_san_rate);
         double sal_after = sal_pre - sal_kuk - sal_kun - sal_ko - sal_san;
 
         paramMap.put("sal_pre", sal_pre);
@@ -73,5 +80,31 @@ public class EmpServiceImp implements EmpService{
     public int empDelete(Map<String, Object> paramMap) throws Exception {
         return empDao.empDelete(paramMap);
     }
+
+    @Override
+    public int vaceInsert(Map<String, Object> paramMap) throws Exception {
+        int dt_va_tot=0;
+        int dt_vaca_rest = 0;
+
+
+
+
+
+        String levelCd = (String) paramMap.get("level_cd");
+        String[] level_cdArray= {"10","20","30"};
+        int[] dt_va_totArray  = {12,13,14};
+        for (int i=0; i<level_cdArray.length; i++) {
+            if(level_cdArray[i].equals(levelCd)) {
+                dt_va_tot = dt_va_totArray[i];
+                break;
+            }
+        }
+        dt_vaca_rest = dt_va_tot;
+        paramMap.put("dt_va_tot", dt_va_tot);
+        paramMap.put("dt_vaca_rest", dt_vaca_rest);
+        return empDao.vaceInsert(paramMap);
+    }
+
+
 
 }
