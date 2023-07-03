@@ -1,5 +1,5 @@
 package kr.happyjob.study.emp.model;
-// www
+//
 public class EmpModel {
 
 	private String loginId;
