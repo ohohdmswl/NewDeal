@@ -143,7 +143,7 @@ public class MngNotController {
          HttpServletResponse response, HttpSession session) throws Exception {
       
       logger.info("+ Start " + className + ".noticesavefile");
-      logger.info("   - paramMap111 : " + paramMap);
+      logger.info("   - paramMap : " + paramMap);
       
       String action = (String) paramMap.get("action");
       
