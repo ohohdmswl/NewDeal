@@ -7,9 +7,13 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Job Korea</title>
+<title>DK Corporation</title>
 
 <jsp:include page="/WEB-INF/view/common/common_include.jsp"></jsp:include>
+
+<!-- 대광유통 Favicon -->
+<link rel="icon" type="image/png" sizes="16x16" href="${CTX_PATH}/images/admin/comm/favicon-16x16.png">
+
 <script src="https://unpkg.com/axios@0.12.0/dist/axios.min.js"></script>
 <script src="https://unpkg.com/lodash@4.13.1/lodash.min.js"></script>
 <!-- D3 -->
